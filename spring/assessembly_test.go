@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"sort"
 
+	"github.com/cogger/clockwork/testdata"
 	"github.com/cogger/cogger/cogs"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -53,6 +54,69 @@ var _ = Describe("Assessembly", func() {
 		Expect(assessembly.Names()).To(HaveLen(10))
 		assessembly.Clear()
 		Expect(assessembly.Names()).To(HaveLen(0))
+	})
+
+	Context("when ordering springs", func() {
+		for _, test := range testdata.Tests {
+			func(test testdata.TestCase) {
+				It(fmt.Sprintf("should be able to do a %s", test.Name), func() {
+
+					var first Spring
+					for i, sd := range test.Defs {
+
+						sprng := assessembly.Add(New(sd.Name, cogs.NoOp(), sd.Deps...))
+						if i == 0 {
+							first = sprng
+						}
+					}
+
+					path, err := assessembly.Order(first)
+
+					Expect(err).ToNot(HaveOccurred())
+					names := []string{}
+					for _, sprng := range path {
+						names = append(names, sprng.Name())
+					}
+					Expect(names).To(Equal(test.Expected))
+				})
+			}(test)
+		}
+
+		It("should fail on circular dependencies", func() {
+			sprng := assessembly.Add(New("a", cogs.NoOp(), "b"))
+			assessembly.Add(New("b", cogs.NoOp(), "c"))
+			assessembly.Add(New("c", cogs.NoOp(), "d"))
+			assessembly.Add(New("d", cogs.NoOp(), "e"))
+			assessembly.Add(New("e", cogs.NoOp(), "c"))
+
+			_, err := assessembly.Order(sprng)
+			Expect(err).To(HaveOccurred())
+			Expect(err).To(Equal(ErrCircularDependency))
+		})
+
+		It("should fail when a dependencies does not exist", func() {
+			sprng := assessembly.Add(New("a", cogs.NoOp(), "b"))
+			assessembly.Add(New("b", cogs.NoOp(), "c"))
+			assessembly.Add(New("c", cogs.NoOp(), "d"))
+			assessembly.Add(New("d", cogs.NoOp(), "e"))
+			assessembly.Add(New("e", cogs.NoOp(), "f"))
+
+			_, err := assessembly.Order(sprng)
+			Expect(err).To(HaveOccurred())
+			Expect(err).To(Equal(ErrDoesNotExist))
+		})
+
+		It("should fail when a the spring you are trying to resolve is not in the assessembly", func() {
+			sprng := New("a", cogs.NoOp(), "b")
+			assessembly.Add(New("b", cogs.NoOp(), "c"))
+			assessembly.Add(New("c", cogs.NoOp(), "d"))
+			assessembly.Add(New("d", cogs.NoOp(), "e"))
+			assessembly.Add(New("e", cogs.NoOp()))
+
+			_, err := assessembly.Order(sprng)
+			Expect(err).To(HaveOccurred())
+			Expect(err).To(Equal(ErrDoesNotExist))
+		})
 	})
 
 	AfterEach(func() {

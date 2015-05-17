@@ -1,4 +1,4 @@
-package mainspring
+package automaton
 
 import (
 	"fmt"
@@ -35,6 +35,6 @@ var _ = Describe("Wind", func() {
 		assessembly.Add(b)
 		_, err := Wind(ctx, a, assessembly)
 		Expect(err).To(HaveOccurred())
-		Expect(err).To(Equal(ErrCircularDependency))
+		Expect(err).To(Equal(spring.ErrCircularDependency))
 	})
 })

@@ -1,4 +1,4 @@
-package mainspring
+package automaton
 
 import (
 	. "github.com/onsi/ginkgo"

@@ -5,16 +5,17 @@ type Assessembly interface {
 	Get(string) (Spring, error)
 	Names() []string
 	Clear() Assessembly
+	Order(Spring) (Springs, error)
 }
 
 func NewAssessembly() Assessembly {
 	return &defaultAssessembly{
-		springs: map[string]Spring{},
+		springs: map[string]*node{},
 	}
 }
 
 type defaultAssessembly struct {
-	springs map[string]Spring
+	springs map[string]*node
 }
 
 func (da *defaultAssessembly) Add(sprng Spring) Spring {
@@ -22,17 +23,20 @@ func (da *defaultAssessembly) Add(sprng Spring) Spring {
 	if ok {
 		panic(ErrDuplicateName)
 	}
-	da.springs[sprng.Name()] = sprng
+	da.springs[sprng.Name()] = &node{
+		sprng: sprng,
+	}
+
 	return sprng
 }
 
 func (da *defaultAssessembly) Get(name string) (Spring, error) {
-	sprng, ok := da.springs[name]
+	node, ok := da.springs[name]
 	var err error
 	if !ok {
-		err = ErrDoesNotExist
+		return nil, ErrDoesNotExist
 	}
-	return sprng, err
+	return node.sprng, err
 }
 
 func (da *defaultAssessembly) Names() []string {
@@ -44,6 +48,44 @@ func (da *defaultAssessembly) Names() []string {
 }
 
 func (da *defaultAssessembly) Clear() Assessembly {
-	da.springs = map[string]Spring{}
+	da.springs = map[string]*node{}
 	return da
+}
+
+func (da *defaultAssessembly) resetNodes() {
+	for _, n := range da.springs {
+		n.edges = []*node{}
+	}
+}
+
+func (da *defaultAssessembly) Order(sprng Spring) (Springs, error) {
+	var sprngs Springs
+	var err error
+
+	da.resetNodes()
+
+	for _, n := range da.springs {
+		for _, dep := range n.sprng.DependsOn() {
+			c, ok := da.springs[dep]
+			if !ok {
+				return sprngs, ErrDoesNotExist
+			}
+			n.addEdge(c)
+		}
+	}
+
+	n, ok := da.springs[sprng.Name()]
+	if !ok {
+		return sprngs, ErrDoesNotExist
+	}
+
+	nodes, err := n.resolve([]*node{}, map[string]bool{})
+	if err != nil {
+		return sprngs, err
+	}
+
+	for _, n := range nodes {
+		sprngs = append(sprngs, n.sprng)
+	}
+	return sprngs, err
 }

@@ -74,7 +74,7 @@ var _ = Describe("Movement", func() {
 
 	It("should return a cog when getting a movement", func() {
 		AddCog("bob", cogs.NoOp())
-		cog, err := Movement(context.Background(), MustGet("bob"))
+		cog, err := Wind(context.Background(), MustGet("bob"))
 		Expect(err).ToNot(HaveOccurred())
 		_, ok := cog.(cogger.Cog)
 		Expect(ok).To(BeTrue())

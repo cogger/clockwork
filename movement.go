@@ -1,7 +1,7 @@
 package clockwork
 
 import (
-	"github.com/cogger/clockwork/mainspring"
+	"github.com/cogger/clockwork/automaton"
 	"github.com/cogger/clockwork/spring"
 	"github.com/cogger/cogger"
 	"golang.org/x/net/context"
@@ -37,6 +37,6 @@ func Clear() {
 	assessembly.Clear()
 }
 
-func Movement(ctx context.Context, sprng spring.Spring) (cogger.Cog, error) {
-	return mainspring.Wind(ctx, sprng, assessembly)
+func Wind(ctx context.Context, sprng spring.Spring) (cogger.Cog, error) {
+	return automaton.Wind(ctx, sprng, assessembly)
 }
