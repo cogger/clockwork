@@ -1,11 +1,11 @@
 # clockwork
 
-|
-__
-**Documentation:** | [![GoDoc](https://godoc.org/github.com/cogger/clockwork?status.png)](http://godoc.org/github.com/cogger/clockwork)  
-**Build Status:** | [![Build Status](https://travis-ci.org/cogger/clockwork.svg?branch=master)](https://travis-ci.org/cogger/clockwork)  
-**Test Coverage:** | [![Coverage Status](https://coveralls.io/repos/cogger/clockwork/badge.svg?branch=master)](https://coveralls.io/r/cogger/clockwork?branch=master)
-**License:** | [![License](http://img.shields.io/:license-apache-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
+| Type               | Badge
+|---------------------------------------
+| **Documentation:** | [![GoDoc](https://godoc.org/github.com/cogger/clockwork?status.png)](http://godoc.org/github.com/cogger/clockwork)  
+| **Build Status:**  | [![Build Status](https://travis-ci.org/cogger/clockwork.svg?branch=master)](https://travis-ci.org/cogger/clockwork)  
+| **Test Coverage:** | [![Coverage Status](https://coveralls.io/repos/cogger/clockwork/badge.svg?branch=master)](https://coveralls.io/r/cogger/clockwork?branch=master)
+| **License:**       | [![License](http://img.shields.io/:license-apache-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
 
 clockwork extends base cogger to add named cogs with dependency lists.  clockwork also contains functionality to do a graph topological sort to determine what order to call the cogs in.  It currently calls all cogs in a series but is being upgraded to call all cogs that can be in parallel.
 
