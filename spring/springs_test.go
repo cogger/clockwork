@@ -19,7 +19,7 @@ var _ = Describe("Springs", func() {
 		var sprngs Springs
 		count := 10
 		for i := 0; i < count; i++ {
-			sprngs = append(sprngs, New(fmt.Sprintf("spring-$d", i), cogs.NoOp()))
+			sprngs = append(sprngs, New(fmt.Sprintf("spring-%d", i), cogs.NoOp()))
 		}
 		cs := sprngs.ToCogs()
 		Expect(cs).To(HaveLen(count))

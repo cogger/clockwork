@@ -1,5 +1,6 @@
 package spring
 
+//Assessembly interface describes how springs should be assessed from storage
 type Assessembly interface {
 	Add(Spring) Spring
 	Get(string) (Spring, error)
@@ -8,6 +9,7 @@ type Assessembly interface {
 	Order(Spring) (Springs, error)
 }
 
+//NewAssessembly creates an Assessembly from the default impliementation
 func NewAssessembly() Assessembly {
 	return &defaultAssessembly{
 		springs: map[string]*node{},

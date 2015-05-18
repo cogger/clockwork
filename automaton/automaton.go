@@ -9,11 +9,13 @@ import (
 	"golang.org/x/net/context"
 )
 
+//Automaton interface implements a basic cog and the ability resolve to what order to load cogs in.
 type Automaton interface {
 	cogger.Cog
 	Wind(context.Context, spring.Spring) error
 }
 
+//New creates a new Automaton from the default automaton
 func New(springs spring.Assessembly) Automaton {
 	return &defaultAutomaton{
 		springs: springs,
