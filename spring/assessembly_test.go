@@ -5,9 +5,9 @@ import (
 	"sort"
 
 	"github.com/cogger/clockwork/testdata"
-	"github.com/cogger/cogger/cogs"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	"gopkg.in/cogger/cogger.v1/cogs"
 )
 
 var _ = Describe("Assessembly", func() {

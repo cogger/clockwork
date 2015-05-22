@@ -2,11 +2,11 @@ package automaton
 
 import (
 	"github.com/cogger/clockwork/spring"
-	"github.com/cogger/cogger"
-	"github.com/cogger/cogger/cogs"
-	"github.com/cogger/cogger/limiter"
-	"github.com/cogger/cogger/order"
 	"golang.org/x/net/context"
+	"gopkg.in/cogger/cogger.v1"
+	"gopkg.in/cogger/cogger.v1/cogs"
+	"gopkg.in/cogger/cogger.v1/limiter"
+	"gopkg.in/cogger/cogger.v1/order"
 )
 
 //Automaton interface implements a basic cog and the ability resolve to what order to load cogs in.

@@ -13,7 +13,7 @@ clockwork extends base cogger to add named cogs with dependency lists.  clockwor
 package main
 
 import (
-	"github.com/cogger/cogger/cogs"
+	"gopkg.in/cogger/cogger.v1/cogs"
 	"github.com/cogger/clockwork"
 	"github.com/cogger/clockwork/spring"
 	"golang.org/x/net/context"

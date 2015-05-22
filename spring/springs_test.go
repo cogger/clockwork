@@ -5,8 +5,8 @@ import (
 	"reflect"
 
 	. "github.com/cogger/clockwork/spring"
-	"github.com/cogger/cogger"
-	"github.com/cogger/cogger/cogs"
+	"gopkg.in/cogger/cogger.v1"
+	"gopkg.in/cogger/cogger.v1/cogs"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"

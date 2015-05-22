@@ -1,9 +1,9 @@
 package spring
 
 import (
-	"github.com/cogger/cogger"
-	"github.com/cogger/cogger/limiter"
 	"golang.org/x/net/context"
+	"gopkg.in/cogger/cogger.v1"
+	"gopkg.in/cogger/cogger.v1/limiter"
 )
 
 //Spring implements a basic cog interface, the ability to get a name and

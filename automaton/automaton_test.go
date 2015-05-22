@@ -6,11 +6,11 @@ import (
 
 	"github.com/cogger/clockwork/spring"
 	"github.com/cogger/clockwork/testdata"
-	"github.com/cogger/cogger"
-	"github.com/cogger/cogger/cogs"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"golang.org/x/net/context"
+	"gopkg.in/cogger/cogger.v1"
+	"gopkg.in/cogger/cogger.v1/cogs"
 )
 
 var _ = Describe("Automaton", func() {

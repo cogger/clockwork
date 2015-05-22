@@ -3,8 +3,8 @@ package clockwork
 import (
 	"github.com/cogger/clockwork/automaton"
 	"github.com/cogger/clockwork/spring"
-	"github.com/cogger/cogger"
 	"golang.org/x/net/context"
+	"gopkg.in/cogger/cogger.v1"
 )
 
 var assessembly = spring.NewAssessembly()

@@ -1,6 +1,6 @@
 package spring
 
-import "github.com/cogger/cogger"
+import "gopkg.in/cogger/cogger.v1"
 
 //Springs is an array of Springs
 type Springs []Spring
