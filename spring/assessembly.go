@@ -1,5 +1,7 @@
 package spring
 
+import "github.com/gonum/graph/concrete"
+
 //Assessembly interface describes how springs should be assessed from storage
 type Assessembly interface {
 	Add(Spring) Spring
@@ -12,12 +14,12 @@ type Assessembly interface {
 //NewAssessembly creates an Assessembly from the default impliementation
 func NewAssessembly() Assessembly {
 	return &defaultAssessembly{
-		springs: map[string]*node{},
+		springs: map[string]Spring{},
 	}
 }
 
 type defaultAssessembly struct {
-	springs map[string]*node
+	springs map[string]Spring
 }
 
 func (da *defaultAssessembly) Add(sprng Spring) Spring {
@@ -25,20 +27,18 @@ func (da *defaultAssessembly) Add(sprng Spring) Spring {
 	if ok {
 		panic(ErrDuplicateName)
 	}
-	da.springs[sprng.Name()] = &node{
-		sprng: sprng,
-	}
+	da.springs[sprng.Name()] = sprng
 
 	return sprng
 }
 
 func (da *defaultAssessembly) Get(name string) (Spring, error) {
-	node, ok := da.springs[name]
+	sprng, ok := da.springs[name]
 	var err error
 	if !ok {
 		return nil, ErrDoesNotExist
 	}
-	return node.sprng, err
+	return sprng, err
 }
 
 func (da *defaultAssessembly) Names() []string {
@@ -50,44 +50,57 @@ func (da *defaultAssessembly) Names() []string {
 }
 
 func (da *defaultAssessembly) Clear() Assessembly {
-	da.springs = map[string]*node{}
+	da.springs = map[string]Spring{}
 	return da
 }
 
-func (da *defaultAssessembly) resetNodes() {
-	for _, n := range da.springs {
-		n.edges = []*node{}
-	}
-}
-
 func (da *defaultAssessembly) Order(sprng Spring) (Springs, error) {
-	var sprngs Springs
-	var err error
+	directed := concrete.NewDirectedGraph()
+	if _, ok := da.springs[sprng.Name()]; !ok {
+		return Springs{}, ErrDoesNotExist
+	}
 
-	da.resetNodes()
-
-	for _, n := range da.springs {
-		for _, dep := range n.sprng.DependsOn() {
-			c, ok := da.springs[dep]
+	for _, node := range da.springs {
+		directed.AddNode(node)
+		for _, name := range node.DependsOn() {
+			dependency, ok := da.springs[name]
 			if !ok {
-				return sprngs, ErrDoesNotExist
+				return Springs{}, ErrDoesNotExist
 			}
-			n.addEdge(c)
+			directed.AddDirectedEdge(concrete.Edge{F: node, T: dependency}, 1)
 		}
 	}
 
-	n, ok := da.springs[sprng.Name()]
-	if !ok {
-		return sprngs, ErrDoesNotExist
+	var resolve func(Spring, []Spring, map[string]bool) ([]Spring, error)
+
+	resolve = func(sprng Spring, resolved []Spring, unresolved map[string]bool) ([]Spring, error) {
+		unresolved[sprng.Name()] = true
+		for _, successor := range directed.Successors(sprng) {
+			c := successor.(Spring)
+			found := false
+			for i := 0; i < len(resolved); i++ {
+				if resolved[i].Name() == c.Name() {
+					found = true
+				}
+			}
+
+			if !found {
+				if !unresolved[c.Name()] {
+					var err error
+					resolved, err = resolve(c, resolved, unresolved)
+					if err != nil {
+						return resolved, err
+					}
+				} else {
+					return resolved, ErrCircularDependency
+				}
+			}
+		}
+		resolved = append(resolved, sprng)
+		delete(unresolved, sprng.Name())
+		return resolved, nil
 	}
 
-	nodes, err := n.resolve([]*node{}, map[string]bool{})
-	if err != nil {
-		return sprngs, err
-	}
-
-	for _, n := range nodes {
-		sprngs = append(sprngs, n.sprng)
-	}
-	return sprngs, err
+	nodes, err := resolve(sprng, []Spring{}, map[string]bool{})
+	return nodes, err
 }

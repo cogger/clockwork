@@ -1,6 +1,9 @@
 package spring
 
 import (
+	"hash/adler32"
+
+	"github.com/gonum/graph"
 	"golang.org/x/net/context"
 	"gopkg.in/cogger/cogger.v1"
 	"gopkg.in/cogger/cogger.v1/limiter"
@@ -9,6 +12,7 @@ import (
 //Spring implements a basic cog interface, the ability to get a name and
 type Spring interface {
 	cogger.Cog
+	graph.Node
 	Name() string
 	DependsOn() []string
 }
@@ -26,6 +30,10 @@ type defaultSpring struct {
 	name    string
 	cog     cogger.Cog
 	depends []string
+}
+
+func (spring *defaultSpring) ID() int {
+	return int(adler32.Checksum([]byte(spring.name)))
 }
 
 func (spring *defaultSpring) Name() string {
